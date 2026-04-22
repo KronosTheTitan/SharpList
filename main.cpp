@@ -6,10 +6,11 @@ int main()
 {
     auto ints = list<int>();
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 64; i++)
     {
-        ints.add(i+10);
+        ints.add(i);
     }
+    ints.reverse();
 
     for (int i = 0; i < ints.count; i++)
     {

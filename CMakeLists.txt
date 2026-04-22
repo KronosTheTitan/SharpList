@@ -7,5 +7,4 @@ add_executable(
         SharpList
         main.cpp
         list.h
-        list.cpp
 )
