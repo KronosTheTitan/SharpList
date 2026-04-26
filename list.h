@@ -18,15 +18,18 @@ public:
 
     void add(T item);
     void add_range(T* items, int n);
+    void clear();
+    bool contains(T item);
     int ensure_capacity(int desired_capacity);
+    int index_of(T item);
+    int index_of(T item, int index);
+    int index_of(T item, int index, int end);
     void remove(T item);
     void remove_range(T* items, int n);
     void remove_at(int index);
-    void clear();
     void reverse();
     void trim_excess();
 
-    bool contains(T item);
 
     T& operator[](int index);
 
@@ -71,6 +74,7 @@ list<T>::~list()
 {
     free(this->buffer);
 }
+
 ///Adds an object to the end of the List<T>.
 template <typename T>
 void list<T>::add(T item)
@@ -81,6 +85,7 @@ void list<T>::add(T item)
     this->buffer[this->size] = item;
     this->size += 1;
 }
+
 ///Adds the elements of the specified collection to the end of the List<T>.
 template <typename T>
 void list<T>::add_range(T* items, const int n)
@@ -90,6 +95,31 @@ void list<T>::add_range(T* items, const int n)
         this->add(items[i]);
     }
 }
+
+///Removes all elements from the List<T>.
+template <typename T>
+void list<T>::clear()
+{
+    free(this->buffer);
+    this->buffer = static_cast<T*>(malloc(sizeof(T) * LIST_INITIAL_CAPACITY));
+    this->size = 0;
+    this->capacity = LIST_INITIAL_CAPACITY;
+}
+
+///Determines whether an element is in the List<T>.
+template <typename T>
+bool list<T>::contains(T item)
+{
+    for (int i = 0; i < this->size; i++)
+    {
+        if (this->buffer[i] != item)
+            continue;
+
+        return true;
+    }
+    return false;
+}
+
 ///Ensures that the capacity of this list is at least the specified capacity. If the current capacity is less than capacity, it is increased to at least the specified capacity.
 template <typename T>
 int list<T>::ensure_capacity(int desired_capacity)
@@ -106,6 +136,53 @@ int list<T>::ensure_capacity(int desired_capacity)
 
     return this->capacity;
 }
+
+///Searches for the specified object and returns the zero-based index of the first occurrence within the entire List<T>.
+template <typename T>
+int list<T>::index_of(T item)
+{
+    for (int i = 0; i < this->size; i++)
+    {
+        if (this->buffer[i] == item)
+            return i;
+    }
+    return -1;
+}
+
+///Searches for the specified object and returns the zero-based index of the first occurrence within the range of elements in the List<T> that extends from the specified index to the last element.
+template <typename T>
+int list<T>::index_of(T item, const int index)
+{
+    for (int i = index; i < this->size; i++)
+    {
+        if (this->buffer[i] == item)
+            return i;
+    }
+    return -1;
+}
+
+///Searches for the specified object and returns the zero-based index of the first occurrence within the range of elements in the List<T> that starts at the specified index and contains the specified number of elements.
+template <typename T>
+int list<T>::index_of(T item, const int index, const int end)
+{
+    int limit = 0;
+    if (index + end <= this->size)
+    {
+        limit = index + end;
+    }
+    else
+    {
+        limit = this->size;
+    }
+
+    for (int i = index; i < limit; i++)
+    {
+        if (this->buffer[i] == item)
+            return i;
+    }
+    return -1;
+}
+
 ///Removes the first occurrence of a specific object from the List<T>.
 template <typename T>
 void list<T>::remove(T item)
@@ -121,6 +198,7 @@ void list<T>::remove(T item)
 
     remove_at(index);
 }
+
 ///Removes all the elements that match the conditions defined by the specified predicate.
 template <typename T>
 void list<T>::remove_range(T* items, const int n)
@@ -130,6 +208,7 @@ void list<T>::remove_range(T* items, const int n)
         this->remove(items[i]);
     }
 }
+
 ///Removes the element at the specified index of the List<T>.
 template <typename T>
 void list<T>::remove_at(const int index)
@@ -139,15 +218,7 @@ void list<T>::remove_at(const int index)
     }
     this->size -= 1;
 }
-///Removes all elements from the List<T>.
-template <typename T>
-void list<T>::clear()
-{
-    free(this->buffer);
-    this->buffer = static_cast<T*>(malloc(sizeof(T) * LIST_INITIAL_CAPACITY));
-    this->size = 0;
-    this->capacity = LIST_INITIAL_CAPACITY;
-}
+
 ///Reverses the order of the elements in the entire List<T>.
 template <typename T>
 void list<T>::reverse()
@@ -162,6 +233,7 @@ void list<T>::reverse()
         --r;
     }
 }
+
 ///Sets the capacity to the actual number of elements in the List<T>, if that number is less than a threshold value.
 template <typename T>
 void list<T>::trim_excess()
@@ -179,19 +251,6 @@ void list<T>::trim_excess()
     #endif
 
 }
-///Determines whether an element is in the List<T>.
-template <typename T>
-bool list<T>::contains(T item)
-{
-    for (int i = 0; i < this->size; i++)
-    {
-        if (this->buffer[i] != item)
-            continue;
-
-        return true;
-    }
-    return false;
-}
 
 template <typename T>
 T& list<T>::operator[](int index)
@@ -201,6 +260,7 @@ T& list<T>::operator[](int index)
 
     return this->buffer[index];
 }
+
 ///Copies the elements of the List<T> to a new array.
 template <typename T>
 T* list<T>::to_array()
